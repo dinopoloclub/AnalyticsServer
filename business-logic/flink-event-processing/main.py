@@ -99,6 +99,7 @@ output_region = output_property_map[output_region_key]
 # DDL
 
 # Flink Kinesis adapter 5.0.0-1.20 settings
+# Note: time is inteoretted as a ms
 _SOURCE_TABLE_DEF = """
 CREATE TABLE {0} (
     event ROW(
@@ -111,7 +112,7 @@ CREATE TABLE {0} (
         `event_data` STRING
     ),
     application_id STRING,
-    rowtime AS TO_TIMESTAMP_LTZ(event.event_timestamp, 0),
+    rowtime AS TO_TIMESTAMP_LTZ(event.event_timestamp, 3), 
     WATERMARK FOR rowtime AS rowtime - INTERVAL '5' SECOND
 ) WITH (
     'connector' = 'kinesis',
@@ -136,7 +137,7 @@ CREATE TABLE {0} (
         `event_data` STRING
     ),
     application_id STRING,
-    rowtime AS TO_TIMESTAMP_LTZ(event.event_timestamp, 0),
+    rowtime AS TO_TIMESTAMP_LTZ(event.event_timestamp, 3),
     WATERMARK FOR rowtime AS rowtime - INTERVAL '5' SECOND
 ) WITH (
     'connector' = 'kinesis-legacy',

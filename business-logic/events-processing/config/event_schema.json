@@ -39,6 +39,10 @@
 					"type": "number",
 					"description": "The time in seconds since the Unix epoch at which this event occurred (set by producer of event)."
 				},
+				"event_timestamp_ms": {
+					"type": "number",
+					"description": "The time in milliseconds since the Unix epoch at which this event occurred (set by producer of event)."
+				},
 				"event_version": {
 					"type": "string",
 					"pattern": "^[A-Za-z0-9-_.]+$",
@@ -53,7 +57,11 @@
 					"type": "object"
 				}
 			},
-			"required": ["event_id", "event_type", "event_timestamp", "event_name"]
+			"required": ["event_id", "event_type", "event_name"],
+			"anyOf": [
+				{ "required": ["event_timestamp"] },
+				{ "required": ["event_timestamp_ms"] }
+			]
 		}
 	}
 }

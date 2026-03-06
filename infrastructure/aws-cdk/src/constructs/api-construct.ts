@@ -866,6 +866,10 @@ export class ApiConstruct extends Construct {
                   "event_name",
                   "event_timestamp",
                 ],
+                anyof: [
+                  { required: ["event_timestamp"] },
+                  { required: ["event_timestamp_ms"]},
+                ],
                 properties: {
                   event_id: {
                     type: "string",
@@ -900,6 +904,11 @@ export class ApiConstruct extends Construct {
                     description:
                       "The time in seconds since the Unix epoch at which this event occurred (set by producer of event).",
                   },
+                  event_timestamp_ms: {
+                    type: "number",
+                    description:
+                      "The time in milliseconds since the Unix epoch at which this event occurred (set by producer of event).",
+                  },                
                   event_data: {
                     type: "object",
                   },

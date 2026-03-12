@@ -133,6 +133,10 @@ class Event {
         if (event.hasOwnProperty('event_timestamp_ms')) {
           if (convertTimestamp) { 
             let newDate = new Date(0);
+            // Note event_timestamp_ms since epoch is stored as an integer in a JS Number field 
+            // It will start to lose precision after about 285,000 years (if my math is right). 
+            // If you are still reading this after that becomes a problem then... sorry.
+
             newDate.setUTCMilliseconds(Number(event.event_timestamp_ms));
             transformed_event.event_timestamp = newDate;
           } else {

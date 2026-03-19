@@ -99,7 +99,7 @@ output_region = output_property_map[output_region_key]
 # DDL
 
 # Flink Kinesis adapter 5.0.0-1.20 settings
-# Note: time is inteoretted as a ms
+# Note: time is interpreted  as a ms
 _SOURCE_TABLE_DEF = """
 CREATE TABLE {0} (
     event ROW(

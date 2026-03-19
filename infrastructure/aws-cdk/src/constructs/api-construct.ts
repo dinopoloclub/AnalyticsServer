@@ -864,7 +864,6 @@ export class ApiConstruct extends Construct {
                   "event_id",
                   "event_type",
                   "event_name",
-                  "event_timestamp",
                 ],
                 anyof: [
                   { required: ["event_timestamp"] },

@@ -236,7 +236,7 @@ resource "aws_kinesis_firehose_delivery_stream" "game_events_firehose" {
           type = "MetadataExtraction"
           parameters {
             parameter_name   = "MetadataExtractionQuery"
-            parameter_value  = "{year: .event_timestamp| strftime(\"%Y\"), month: .event_timestamp| strftime(\"%m\"), day: .event_timestamp| strftime(\"%d\")}"
+            parameter_value  = "{year: .event_timestamp/1000| strftime(\"%Y\"), month: .event_timestamp/1000| strftime(\"%m\"), day: .event_timestamp/1000| strftime(\"%d\")}"
           }
           parameters {
             parameter_name   = "JsonParsingEngine"

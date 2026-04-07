@@ -128,7 +128,21 @@ class Event {
         if (event.hasOwnProperty('event_version')) {
           transformed_event.event_version = String(event.event_version);
         }
-        if (event.hasOwnProperty('event_timestamp')) {
+          // If event_timestamp_ms is provided, use it as the timestamp. 
+          // Otherwise, fall back to event_timestamp for backwards compatibility
+        if (event.hasOwnProperty('event_timestamp_ms')) {
+          if (convertTimestamp) { 
+            let newDate = new Date(0);
+            // Note event_timestamp_ms since epoch is stored as an integer in a JS Number field 
+            // It will start to lose precision after about 285,000 years (if my math is right). 
+            // If you are still reading this after that becomes a problem then... sorry.
+
+            newDate.setUTCMilliseconds(Number(event.event_timestamp_ms));
+            transformed_event.event_timestamp = newDate;
+          } else {
+            transformed_event.event_timestamp = Number(event.event_timestamp);
+          }
+        } else if (event.hasOwnProperty('event_timestamp')) {
           if (convertTimestamp) { 
             let newDate = new Date(0);
             newDate.setUTCSeconds(Number(event.event_timestamp));
@@ -176,8 +190,10 @@ class Event {
         if (event.hasOwnProperty('event_version')) {
           unregistered_format.event_version = String(event.event_version);
         }
-        if (event.hasOwnProperty('event_timestamp')) {
-          unregistered_format.event_timestamp = Number(event.event_timestamp);
+        if (event.hasOwnProperty('event_timestamp_ms')) {
+          unregistered_format.event_timestamp = Number(event.event_timestamp_ms);
+        } else if (event.hasOwnProperty('event_timestamp')) {
+          unregistered_format.event_timestamp = Number(event.event_timestamp)*1000 ;
         }
         if (event.hasOwnProperty('app_version')) {
           unregistered_format.app_version = String(event.app_version);

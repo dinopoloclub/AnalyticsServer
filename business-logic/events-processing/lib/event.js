@@ -40,7 +40,32 @@ const convertTimestamp = process.env.CONVERT_TIMESTAMP && process.env.CONVERT_TI
 const dynamoClient = new DynamoDB(dynamoConfig);
 const docClient = DynamoDBDocument.from(dynamoClient);
 
-console.log(`Loaded event JSON Schema: ${JSON.stringify(event_schema)}`);
+// Early versions of the MO Analytics had a bug whereby they could start spamming 
+// millions of events.  We want to block these so they don't pollute the database.
+// We want to early out as soon as possible for these misbehaving versions to save 
+// on processing, so we hard code these here rather than wasting time looking anything 
+// up in the database. 
+// In later builds of MO each new build/sku gets it's own authorization that we can turn
+// off in the database, so fingers crossed these are the only ones we'll ever need to
+// block using this filthy hack.
+
+const badApplications = new Map()
+
+// Each application id has a set of versions that are bad and should be blocked.
+// We have both the dev and prod environments to think of
+
+// "Mini Motorways - Dev"
+badApplications.set('edc7e5f3-1b89-46dd-bce3-9a6baf3fa847',  new Set([
+  '1.0.0.1',
+  '1.0.0.2'
+]));
+
+// "Mini Motorways - Prod"
+badApplications.set('3bddb638-6e29-40b5-b488-f0b5cfb044c1',  new Set([
+  '1.0.0.1',
+  '1.0.0.2'
+]));
+
 
 class Event {
 
@@ -75,6 +100,26 @@ class Event {
       }
       const applicationId = input.application_id;
       const event = input.event;
+
+      let badVersions = badApplications.get(String(applicationId));
+      if(badVersions!=undefined)
+      { 
+        if (event.hasOwnProperty('app_version')) {
+          if(badVersions.has(String(event.app_version))) {
+            // Note: Even though we reject the event here, the game will still receive an OK HTTP 
+            // response and the contents of that response doesn't indicate that that the event 
+            // processing failed. This is what we want as the game only cares about the HTTP 
+            // response type, and we want the game to _think_ the events have been sent successfully
+            // and so it should not try to resend them.
+            return Promise.reject({
+              recordId: recordId,
+              result: 'ProcessingFailed',
+              data: new Buffer.from(JSON.stringify(input) + '\n').toString('base64')
+            });
+          }
+        }
+      }
+
 
       // Add a processing timestamp and the Lambda Request Id to the event metadata
       let metadata = {

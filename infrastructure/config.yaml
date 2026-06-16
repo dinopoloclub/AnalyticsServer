@@ -30,7 +30,7 @@ STREAM_PROVISIONED: false
 STREAM_SHARD_COUNT: 1
 
 API_STAGE_NAME: "prod"
-DEV_MODE: true
+DEV_MODE: false
 S3_BACKUP_MODE: false
 
 EMAIL_ADDRESS: "analyticsprod@dinopoloclub.com"

@@ -239,7 +239,6 @@ export class DataLakeConstruct extends Construct {
               new iam.PolicyStatement({
                 effect: iam.Effect.ALLOW,
                 actions: [
-                  "logs:CreateLogGroup",
                   "logs:CreateLogStream",
                   "logs:PutLogEvents"
                 ],
@@ -247,6 +246,17 @@ export class DataLakeConstruct extends Construct {
                   `arn:aws:logs:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:log-group:/aws-glue/iceberg-compaction/logs:*`,
                   `arn:aws:logs:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:log-group:/aws-glue/iceberg-retention/logs:*`,
                   `arn:aws:logs:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:log-group:/aws-glue/iceberg-orphan-file-deletion/logs:*`
+                ],
+              }),
+              new iam.PolicyStatement({
+                effect: iam.Effect.ALLOW,
+                actions: [
+                  "logs:CreateLogGroup"
+                ],
+                resources: [
+                  `arn:aws:logs:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:log-group:/aws-glue/iceberg-compaction/logs`,
+                  `arn:aws:logs:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:log-group:/aws-glue/iceberg-retention/logs`,
+                  `arn:aws:logs:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:log-group:/aws-glue/iceberg-orphan-file-deletion/logs`
                 ],
               })
             ]
